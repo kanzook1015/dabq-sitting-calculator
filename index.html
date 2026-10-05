@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <base target="_top">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 18px;
+      line-height: 1.7;
+      font-size: 16px;
+    }
+
+    h1 {
+      font-size: 22px;
+      line-height: 1.4;
+    }
+
+    .intro {
+      padding: 14px;
+      background: #f5f5f5;
+      border-radius: 10px;
+      margin-bottom: 22px;
+    }
+
+    .question {
+      margin: 26px 0;
+      padding-bottom: 20px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .question-title {
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .example {
+      font-size: 14px;
+      margin: 5px 0;
+    }
+
+    .note {
+      font-size: 14px;
+      margin: 5px 0;
+    }
+
+    input[type="time"] {
+      font-size: 18px;
+      padding: 10px;
+      margin-top: 8px;
+    }
+
+    .time-row {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+
+    .time-row input {
+      width: 75px;
+      font-size: 18px;
+      padding: 10px;
+      box-sizing: border-box;
+    }
+
+    button {
+      width: 100%;
+      padding: 15px;
+      font-size: 18px;
+      font-weight: 700;
+      margin-top: 15px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .result {
+      display: none;
+      margin-top: 28px;
+      padding: 20px;
+      border: 2px solid #333;
+      border-radius: 12px;
+      text-align: center;
+    }
+
+    .percent {
+      font-size: 34px;
+      font-weight: 800;
+      margin: 10px 0;
+    }
+
+    .choice {
+      font-size: 24px;
+      font-weight: 800;
+      margin-top: 15px;
+    }
+
+    .error {
+      display: none;
+      margin-top: 18px;
+      padding: 14px;
+      border: 2px solid #b00020;
+      border-radius: 8px;
+      font-weight: 700;
+    }
+
+    .small {
+      font-size: 13px;
+      margin-top: 12px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>「座ったり横になったりしていた割合」を計算します</h1>
+
+  <div class="intro">
+    Googleフォームで今答えている
+    <strong>「平日」または「休日」</strong>について入力してください。<br><br>
+    次の質問に答えると、座ったり横になったりしていた時間の
+    <strong>おおよその割合</strong>が出ます。<br>
+    表示された割合に最も近いものを、Googleフォームで選んでください。
+  </div>
+
+  <div class="question">
+    <div class="question-title">
+      1．先ほど入力した「眠ろうと決めた時刻」は？
+    </div>
+    <input type="time" id="bedtime">
+  </div>
+
+  <div class="question">
+    <div class="question-title">
+      2．先ほど入力した「おおよその起きた時刻」は？
+    </div>
+    <input type="time" id="waketime">
+  </div>
+
+  <div class="question">
+    <div class="question-title">
+      3．学校・塾・習い事などで、座っていたおおよその時間は？
+    </div>
+    <div class="example">
+      例：授業、休み時間、部活動で説明を聞いている時間、塾、習い事など
+    </div>
+    <div class="note">
+      ※立っていた時間や運動していた時間は入れません。なかった場合は「0時間0分」としてください。
+    </div>
+    <div class="time-row">
+      <input type="number" id="school_h" min="0" max="23" value="0"> 時間
+      <input type="number" id="school_m" min="0" max="59" value="0"> 分
+    </div>
+  </div>
+
+  <div class="question">
+    <div class="question-title">
+      4．移動中に、座っていたおおよその時間は？
+    </div>
+    <div class="example">
+      例：車、バス、電車など
+    </div>
+    <div class="note">
+      ※歩いた時間や自転車に乗っていた時間は入れません。
+    </div>
+    <div class="time-row">
+      <input type="number" id="move_h" min="0" max="23" value="0"> 時間
+      <input type="number" id="move_m" min="0" max="59" value="0"> 分
+    </div>
+  </div>
+
+  <div class="question">
+    <div class="question-title">
+      5．食事中に、座っていたおおよその時間は？
+    </div>
+    <div class="example">
+      例：朝食、昼食、夕食、おやつなど
+    </div>
+    <div class="time-row">
+      <input type="number" id="meal_h" min="0" max="23" value="0"> 時間
+      <input type="number" id="meal_m" min="0" max="59" value="0"> 分
+    </div>
+  </div>
+
+  <div class="question">
+    <div class="question-title">
+      6．家などで、座ったり横になったりしていたおおよその時間は？
+    </div>
+    <div class="example">
+      例：宿題や勉強、テレビ、ゲーム、動画、SNS、読書など
+    </div>
+    <div class="note">
+      ※食事の時間は上で答えているので、ここには入れません。
+    </div>
+    <div class="time-row">
+      <input type="number" id="home_h" min="0" max="23" value="0"> 時間
+      <input type="number" id="home_m" min="0" max="59" value="0"> 分
+    </div>
+  </div>
+
+  <div class="question">
+    <div class="question-title">
+      7．その他に、座ったり横になったりしていたおおよその時間は？
+    </div>
+    <div class="example">
+      例：上の3～6には当てはまらない時間
+    </div>
+    <div class="time-row">
+      <input type="number" id="other_h" min="0" max="23" value="0"> 時間
+      <input type="number" id="other_m" min="0" max="59" value="0"> 分
+    </div>
+  </div>
+
+  <button onclick="calculate()">割合を計算する</button>
+
+  <div id="error" class="error"></div>
+
+  <div id="result" class="result">
+
+    <div id="sittingResult"></div>
+
+    <div>座ったり横になったりしていたおおよその割合</div>
+
+    <div id="percentResult" class="percent"></div>
+
+    <div>Googleフォームでは</div>
+
+    <div id="choiceResult" class="choice"></div>
+
+    <div class="small">
+      この結果は、割合を考えるための目安です。入力した内容は保存されません。
+    </div>
+
+  </div>
+
+<script>
+
+  function timeToMinutes(value) {
+    if (!value) return null;
+
+    const parts = value.split(":");
+    return Number(parts[0]) * 60 + Number(parts[1]);
+  }
+
+
+  function getAwakeMinutes() {
+
+    const bed =
+      timeToMinutes(document.getElementById("bedtime").value);
+
+    const wake =
+      timeToMinutes(document.getElementById("waketime").value);
+
+    if (bed === null || wake === null) {
+      return null;
+    }
+
+    let sleepWindow = wake - bed;
+
+    if (sleepWindow < 0) {
+      sleepWindow += 24 * 60;
+    }
+
+    if (sleepWindow === 0) {
+      return -1;
+    }
+
+    return 24 * 60 - sleepWindow;
+  }
+
+
+  function formatMinutes(minutes) {
+
+    const h = Math.floor(minutes / 60);
+    const m = minutes % 60;
+
+    return h + "時間" + (m > 0 ? m + "分" : "");
+  }
+
+
+  function readDuration(prefix) {
+
+    const h =
+      Number(document.getElementById(prefix + "_h").value || 0);
+
+    const m =
+      Number(document.getElementById(prefix + "_m").value || 0);
+
+    if (
+      h < 0 ||
+      h > 23 ||
+      m < 0 ||
+      m > 59 ||
+      !Number.isInteger(h) ||
+      !Number.isInteger(m)
+    ) {
+      throw new Error("時間と分の入力を確認してください。");
+    }
+
+    return h * 60 + m;
+  }
+
+
+  function showError(message) {
+
+    const error =
+      document.getElementById("error");
+
+    error.textContent = message;
+    error.style.display = "block";
+
+    document.getElementById("result").style.display = "none";
+  }
+
+
+  function calculate() {
+
+    document.getElementById("error").style.display = "none";
+    document.getElementById("result").style.display = "none";
+
+
+    const awake = getAwakeMinutes();
+
+
+    if (awake === null) {
+
+      showError(
+        "「眠ろうと決めた時刻」と「起きた時刻」を入力してください。"
+      );
+
+      return;
+    }
+
+
+    if (awake < 0) {
+
+      showError(
+        "「眠ろうと決めた時刻」と「起きた時刻」が同じになっています。入力を確認してください。"
+      );
+
+      return;
+    }
+
+
+    let sitting;
+
+
+    try {
+
+      sitting =
+        readDuration("school") +
+        readDuration("move") +
+        readDuration("meal") +
+        readDuration("home") +
+        readDuration("other");
+
+    } catch (e) {
+
+      showError(e.message);
+      return;
+    }
+
+
+    if (sitting > awake) {
+
+      showError(
+        "座ったり横になったりしていた時間が、起きていた時間より長くなっています。"
+        + " 同じ時間を2回入れていないか確認してください。"
+      );
+
+      return;
+    }
+
+
+    const percent =
+      (sitting / awake) * 100;
+
+
+    const displayPercent =
+      Math.round(percent);
+
+
+    let nearest10 =
+      Math.round(percent / 10) * 10;
+
+
+    if (nearest10 < 0) nearest10 = 0;
+    if (nearest10 > 100) nearest10 = 100;
+
+
+    document.getElementById("sittingResult").textContent =
+      "座ったり横になったりしていた時間：約 "
+      + formatMinutes(sitting);
+
+
+    document.getElementById("percentResult").textContent =
+      "約 " + displayPercent + "％";
+
+
+    document.getElementById("choiceResult").textContent =
+      "「" + nearest10 + "％」を選んでください";
+
+
+    document.getElementById("result").style.display =
+      "block";
+
+
+    document.getElementById("result").scrollIntoView({
+      behavior: "smooth",
+      block: "start"
+    });
+  }
+
+</script>
+
+</body>
+</html>
